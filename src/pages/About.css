@@ -1,0 +1,72 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #1E1E2F; /* Darker background for a modern look */
+    color: #ffffff; /* White text for contrast */
+    margin: 0;
+    padding: 20px;
+  }
+  
+  .about-container {
+    padding: 20px;
+    background-color: #282A36; /* Dark background for the content area */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Darker shadow for depth */
+  }
+  
+  h1, h2 {
+    color: #FFB86C; /* Bright accent color for headings */
+  }
+  
+  .about-section {
+    margin-bottom: 30px; /* Spacing between sections */
+    padding: 20px;
+    background-color: #44475A; /* Darker section background */
+    border-radius: 5px; /* Rounded corners for sections */
+  }
+  
+  .about-section ul {
+    list-style-type: disc; /* Bullet points */
+    margin-left: 20px; /* Indentation for list items */
+  }
+  
+  .contributors-container {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping of contributor items */
+    justify-content: space-around; /* Space out items evenly */
+  }
+  
+  .contributor {
+    text-align: center; /* Center text for contributor */
+    margin: 15px;
+    transition: transform 0.3s; /* Smooth transition for the pop-up effect */
+  }
+  
+  .contributor:hover {
+    transform: scale(1.1); /* Scale up the image on hover */
+  }
+  
+  .contributor-image {
+    width: 120px; /* Increased width for images */
+    height: 120px; /* Increased height for images */
+    border-radius: 50%; /* Make images circular */
+    object-fit: cover; /* Ensure the image covers the element */
+    border: 2px solid #FFB86C; /* Bright border around images */
+  }
+  
+  h3 {
+    margin: 10px 0 5px; /* Margin adjustments for contributor names */
+  }
+  
+  p {
+    margin: 0; /* Remove default margin for paragraph */
+  }
+  
+  a {
+    color: #50FA7B; /* Bright link color */
+    text-decoration: none; /* Remove underline from links */
+  }
+  
+  a:hover {
+    text-decoration: underline; /* Underline on hover */
+  }
+  
