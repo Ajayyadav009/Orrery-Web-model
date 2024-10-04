@@ -1,0 +1,15 @@
+.neos-container {
+    padding: 20px;
+    background-color: #282A36; /* Dark background */
+    color: #ffffff; /* White text for contrast */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Shadow for depth */
+  }
+  
+  .neos-section {
+    margin-bottom: 30px; /* Spacing between sections */
+    padding: 20px;
+    background-color: #44475A; /* Darker section background */
+    border-radius: 5px; /* Rounded corners for sections */
+  }
+  
