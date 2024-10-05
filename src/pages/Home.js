@@ -14,8 +14,8 @@ const Home = () => {
           </div>
         </div>
         <nav>
-          <a href="#news">News & Events</a>
-          <a href="#multimedia">Multimedia</a>
+          <a href="https://www.space.com/news" target="_blank" rel="noopener noreferrer">News & Events</a>
+          <a href="https://eyes.nasa.gov/apps/orrery/" target="_blank" rel="noopener noreferrer">Multimedia</a>
           <a href="#orrery-plus">Orrery+</a>
         </nav>
       </header>
