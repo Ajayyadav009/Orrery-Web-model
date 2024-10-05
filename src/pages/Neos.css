@@ -1,15 +1,39 @@
 .neos-container {
-    padding: 20px;
-    background-color: #282A36; /* Dark background */
-    color: #ffffff; /* White text for contrast */
-    border-radius: 8px; /* Rounded corners */
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); /* Shadow for depth */
-  }
-  
-  .neos-section {
-    margin-bottom: 30px; /* Spacing between sections */
-    padding: 20px;
-    background-color: #44475A; /* Darker section background */
-    border-radius: 5px; /* Rounded corners for sections */
-  }
-  
+  width: 80%;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+.neos-section {
+  margin-bottom: 40px;
+}
+
+.neos-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 40px;
+}
+
+.asteroid-image {
+  width: 300px;
+  height: auto;
+  margin-right: 20px; /* Space between the image and the info */
+}
+
+.asteroid-info {
+  flex: 1;
+  padding: 10px;
+}
+
+.asteroid-info h3 {
+  margin-top: 0;
+}
+
+.neos-item ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.neos-item li {
+  margin-bottom: 8px;
+}

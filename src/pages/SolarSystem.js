@@ -13,7 +13,6 @@ const SolarSystem = () => {
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer();
-
     renderer.setSize(window.innerWidth, window.innerHeight);
     mountRef.current.appendChild(renderer.domElement);
 
@@ -26,18 +25,18 @@ const SolarSystem = () => {
 
     // Controls
     const controls = new OrbitControls(camera, renderer.domElement);
-    camera.position.z = 50;
+    camera.position.z = 100;
 
-    // Planet data
+    // Planet data (distances scaled for visualization)
     const planets = [
-      { name: 'Mercury', radius: 0.5, distance: 5, color: 0xC0C0C0 },
-      { name: 'Venus', radius: 0.9, distance: 7, color: 0xFFA500 },
-      { name: 'Earth', radius: 1, distance: 10, color: 0x0000FF },
-      { name: 'Mars', radius: 0.6, distance: 15, color: 0xFF0000 },
-      { name: 'Jupiter', radius: 2, distance: 25, color: 0xFFA500 },
-      { name: 'Saturn', radius: 1.8, distance: 35, color: 0xFFD700 },
-      { name: 'Uranus', radius: 1.2, distance: 45, color: 0x00FFFF },
-      { name: 'Neptune', radius: 1.1, distance: 55, color: 0x0000FF },
+      { name: 'Mercury', radius: 0.5, distance: 5, color: 0xC0C0C0, orbitSpeed: 0.241, rotationSpeed: 0.017 },
+      { name: 'Venus', radius: 0.9, distance: 7, color: 0xFFA500, orbitSpeed: 0.615, rotationSpeed: 0.004 },
+      { name: 'Earth', radius: 1, distance: 10, color: 0x0000FF, orbitSpeed: 1, rotationSpeed: 0.017 },
+      { name: 'Mars', radius: 0.6, distance: 15, color: 0xFF0000, orbitSpeed: 1.88, rotationSpeed: 0.025 },
+      { name: 'Jupiter', radius: 2, distance: 25, color: 0xFFA500, orbitSpeed: 11.86, rotationSpeed: 0.045 },
+      { name: 'Saturn', radius: 1.8, distance: 35, color: 0xFFD700, orbitSpeed: 29.46, rotationSpeed: 0.039 },
+      { name: 'Uranus', radius: 1.2, distance: 45, color: 0x00FFFF, orbitSpeed: 84.01, rotationSpeed: 0.03 },
+      { name: 'Neptune', radius: 1.1, distance: 55, color: 0x0000FF, orbitSpeed: 164.8, rotationSpeed: 0.028 },
     ];
 
     // Create sun
@@ -51,11 +50,9 @@ const SolarSystem = () => {
       const geometry = new THREE.SphereGeometry(planet.radius, 32, 32);
       const material = new THREE.MeshPhongMaterial({ color: planet.color });
       const mesh = new THREE.Mesh(geometry, material);
-      mesh.position.x = planet.distance;
-      mesh.userData = { name: planet.name };
       scene.add(mesh);
 
-      // Create orbit
+      // Create orbit (for visualization)
       const orbitGeometry = new THREE.RingGeometry(planet.distance - 0.1, planet.distance + 0.1, 64);
       const orbitMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, opacity: 0.2, transparent: true });
       const orbit = new THREE.Mesh(orbitGeometry, orbitMaterial);
@@ -76,7 +73,7 @@ const SolarSystem = () => {
       mesh.add(label);
       label.visible = showLabels;
 
-      return { mesh, label };
+      return { mesh, label, angle: 0 };
     });
 
     // Raycaster for planet selection
@@ -118,11 +115,20 @@ const SolarSystem = () => {
     const animate = () => {
       requestAnimationFrame(animate);
 
+      const time = Date.now() * 0.0001;
+
       planetMeshes.forEach((planet, index) => {
-        const angle = Date.now() * 0.001 * (1 / planets[index].distance);
-        planet.mesh.position.x = Math.cos(angle) * planets[index].distance;
-        planet.mesh.position.z = Math.sin(angle) * planets[index].distance;
-        planet.mesh.rotation.y += 0.01;
+        // Update planet's angle for orbit
+        const orbitSpeed = 1 / planets[index].orbitSpeed;
+        planet.angle += orbitSpeed * 0.001;
+
+        // Update planet position based on its orbit
+        planet.mesh.position.x = Math.cos(planet.angle) * planets[index].distance;
+        planet.mesh.position.z = Math.sin(planet.angle) * planets[index].distance;
+
+        // Update planet's rotation on its axis
+        planet.mesh.rotation.y += planets[index].rotationSpeed;
+
         planet.label.visible = showLabels;
       });
 

@@ -49,27 +49,27 @@ const About = () => {
           <div className="contributor">
             <img src={Adarsh} alt="Adarsh" className="contributor-image" />
             <h3>Adarsh</h3>
-            <p>Position </p>
+            <p></p>
           </div>
           <div className="contributor">
             <img src={Ajay} alt="Ajay" className="contributor-image" />
             <h3>Ajay</h3>
-            <p>Position </p>
+            <p> </p>
           </div>
           <div className="contributor">
             <img src={Asheesh} alt="Asheesh" className="contributor-image" />
             <h3>Asheesh</h3>
-            <p>Position </p>
+            <p> </p>
           </div>
           <div className="contributor">
             <img src={Yuvraj} alt="Yuvraj" className="contributor-image" />
             <h3>Yuvraj</h3>
-            <p>Position </p>
+            <p> </p>
           </div>
           <div className="contributor">
             <img src={Nikhil} alt="Nikhil2" className="contributor-image" />
             <h3>Nikhil</h3>
-            <p>Position </p>
+            <p> </p>
           </div>
         </div>
       </section>
