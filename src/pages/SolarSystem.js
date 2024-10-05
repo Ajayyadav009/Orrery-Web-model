@@ -3,15 +3,49 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import TWEEN from '@tweenjs/tween.js';
 
+const PlanetInfo = ({ planet, onClose }) => {
+  if (!planet) return null;
+
+  return (
+    <div style={{
+      position: 'fixed',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      padding: '20px',
+      borderRadius: '10px',
+      color: 'white',
+      maxWidth: '400px',
+      zIndex: 1000
+    }}>
+      <h2>{planet.name}</h2>
+      <p>Radius: {planet.radius} Earth radii</p>
+      <p>Distance from Sun: {planet.distance} AU</p>
+      <p>Orbit Speed: {planet.orbitSpeed} Earth years</p>
+      <p>Rotation Speed: {planet.rotationSpeed} Earth days</p>
+      <button onClick={onClose}>Close</button>
+    </div>
+  );
+};
+
 const SolarSystem = () => {
   const mountRef = useRef(null);
   const [showLabels, setShowLabels] = useState(false);
   const [selectedPlanet, setSelectedPlanet] = useState(null);
+  const [showPlanetInfo, setShowPlanetInfo] = useState(false);
+
+  const sceneRef = useRef(null);
+  const cameraRef = useRef(null);
+  const controlsRef = useRef(null);
+  const planetMeshesRef = useRef([]);
 
   useEffect(() => {
     // Scene setup
     const scene = new THREE.Scene();
+    sceneRef.current = scene;
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    cameraRef.current = camera;
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     mountRef.current.appendChild(renderer.domElement);
@@ -25,6 +59,7 @@ const SolarSystem = () => {
 
     // Controls
     const controls = new OrbitControls(camera, renderer.domElement);
+    controlsRef.current = controls;
     camera.position.z = 100;
 
     // Planet data (distances scaled for visualization)
@@ -50,6 +85,7 @@ const SolarSystem = () => {
       const geometry = new THREE.SphereGeometry(planet.radius, 32, 32);
       const material = new THREE.MeshPhongMaterial({ color: planet.color });
       const mesh = new THREE.Mesh(geometry, material);
+      mesh.userData.name = planet.name;
       scene.add(mesh);
 
       // Create orbit (for visualization)
@@ -75,12 +111,13 @@ const SolarSystem = () => {
 
       return { mesh, label, angle: 0 };
     });
+    planetMeshesRef.current = planetMeshes;
 
     // Raycaster for planet selection
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
-    const onMouseClick = (event) => {
+    const onMouseMove = (event) => {
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
 
@@ -89,27 +126,18 @@ const SolarSystem = () => {
       const intersects = raycaster.intersectObjects(planetMeshes.map(p => p.mesh));
 
       if (intersects.length > 0) {
-        const clickedPlanet = intersects[0].object;
-        setSelectedPlanet(clickedPlanet.userData.name);
-
-        const planetPosition = clickedPlanet.position.clone();
-        const cameraOffset = new THREE.Vector3(0, 0, 5);
-        const finalCameraPosition = planetPosition.add(cameraOffset);
-
-        // Animate camera movement
-        new TWEEN.Tween(camera.position)
-          .to(finalCameraPosition, 1000)
-          .easing(TWEEN.Easing.Quadratic.Out)
-          .start();
-
-        new TWEEN.Tween(controls.target)
-          .to(clickedPlanet.position, 1000)
-          .easing(TWEEN.Easing.Quadratic.Out)
-          .start();
+          const hoveredPlanet = intersects[0].object;
+          const planetData = planets.find(p => p.name === hoveredPlanet.userData.name);
+          
+          if (planetData) {
+              setSelectedPlanet(planetData);
+              setShowPlanetInfo(true);
+          }
+      } else {
+          setShowPlanetInfo(false);
+          setSelectedPlanet(null);
       }
     };
-
-    window.addEventListener('click', onMouseClick);
 
     // Animation loop
     const animate = () => {
@@ -147,14 +175,19 @@ const SolarSystem = () => {
     };
 
     window.addEventListener('resize', handleResize);
+    window.addEventListener('mousemove', onMouseMove);
 
     // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);
-      window.removeEventListener('click', onMouseClick);
+      window.removeEventListener('mousemove', onMouseMove);
       mountRef.current.removeChild(renderer.domElement);
     };
   }, [showLabels]);
+
+  const handleCloseInfo = () => {
+    setShowPlanetInfo(false);
+  };
 
   return (
     <div>
@@ -169,10 +202,8 @@ const SolarSystem = () => {
           Show Planet Labels
         </label>
       </div>
-      {selectedPlanet && (
-        <div style={{ position: 'absolute', bottom: '10px', left: '10px', color: 'white', background: 'rgba(0,0,0,0.5)', padding: '10px' }}>
-          Selected Planet: {selectedPlanet}
-        </div>
+      {showPlanetInfo && (
+        <PlanetInfo planet={selectedPlanet} onClose={handleCloseInfo} />
       )}
     </div>
   );
