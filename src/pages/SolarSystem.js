@@ -33,6 +33,7 @@ const SolarSystem = () => {
   const mountRef = useRef(null);
   const [selectedPlanet, setSelectedPlanet] = useState(null);
   const [showPlanetInfo, setShowPlanetInfo] = useState(false);
+  const [hoveredPlanet, setHoveredPlanet] = useState(null);
 
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
@@ -41,6 +42,7 @@ const SolarSystem = () => {
 
   const handleCloseInfo = () => {
     setShowPlanetInfo(false);
+    setHoveredPlanet(null);
 
     if (selectedPlanet) {
       const planetMesh = planetMeshesRef.current.find(p => p.mesh.userData.name === selectedPlanet.name)?.mesh;
@@ -172,6 +174,22 @@ const SolarSystem = () => {
       }
     };
 
+    const onMouseMove = (event) => {
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(planetMeshes.map(p => p.mesh));
+
+      if (intersects.length > 0) {
+        const hoveredPlanet = intersects[0].object;
+        const planetData = planets.find(p => p.name === hoveredPlanet.userData.name);
+        setHoveredPlanet(planetData);
+      } else {
+        setHoveredPlanet(null);
+      }
+    };
+
     const onMouseWheel = (event) => {
       const zoomAmount = event.deltaY * 0.001; // Adjust zoom speed here
       if (camera.position.z + zoomAmount < 100) { // Prevent zooming in too close
@@ -243,12 +261,14 @@ const SolarSystem = () => {
 
     window.addEventListener('resize', handleResize);
     window.addEventListener('click', onMouseClick);
+    window.addEventListener('mousemove', onMouseMove);
     window.addEventListener('wheel', onMouseWheel);
 
     // Cleanup
     return () => {
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('click', onMouseClick);
+      window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('wheel', onMouseWheel);
       mountRef.current.removeChild(renderer.domElement);
     };
@@ -259,6 +279,9 @@ const SolarSystem = () => {
       <div ref={mountRef} />
       {showPlanetInfo && (
         <PlanetInfo planet={selectedPlanet} onClose={handleCloseInfo} />
+      )}
+      {hoveredPlanet && !showPlanetInfo && (
+        <PlanetInfo planet={hoveredPlanet} onClose={() => setHoveredPlanet(null)} />
       )}
     </div>
   );
